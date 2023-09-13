@@ -218,6 +218,7 @@ io.on("connection", (socket) => {
 });
 
 const port = process.env.PORT || 8000;
-server.listen(port, () => {
+const hostname=process.env.HOSTNAME || '127.0.0.1';
+server.listen(port, hostname,() => {
   console.log(`Socket.IO server running on port ${port}`);
 });
