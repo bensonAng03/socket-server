@@ -16,10 +16,6 @@ const io = new Server(server, {
     credentials: true,
   },
 });
-app.get("/",(req,res)=>{
-  res.write(`<h1>Socket IO Start on Port:${PORT}</h1>`)
-  res.end()
-})
 const cameraRooms = []; 
 const shareRooms = [];
 const users = [];
@@ -234,6 +230,10 @@ io.on("connection", (socket) => {
 // server.listen(port,() => {
 //   console.log(`Socket.IO server running on port ${port}`);
 // });
+app.get("/",(req,res)=>{
+  res.write(`<h1>Socket IO Start on Port:${PORT}</h1>`)
+  res.end()
+})
 
 server.listen(PORT,()=>{
   console.log(`Server is running on port ${PORT}`);
