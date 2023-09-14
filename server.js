@@ -16,14 +16,18 @@ const io = new Server(server, {
     credentials: true,
   },
 });
+app.get("/",(req,res)=>{
+  res.write(`<h1>Socket IO Start on Port:${PORT}</h1>`)
+})
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 const cameraRooms = []; 
 const shareRooms = [];
 const users = [];
 const publishers = [];
 const countDown=[];
-if(socket){
-  console.log("socket:",socket)
-}
 io.on("connection", (socket) => {
   socket.on("join-room", (roomId, userId, username, isPublisher = false) => {
     socket.join(roomId);
@@ -227,10 +231,6 @@ io.on("connection", (socket) => {
 // server.listen(port,() => {
 //   console.log(`Socket.IO server running on port ${port}`);
 // });
-app.get("/",(req,res)=>{
-  res.write(`<h1>Socket IO Start on Port:${PORT}</h1>`)
-  res.end()
-})
 
 server.listen(PORT,()=>{
   console.log(`Server is running on port ${PORT}`);
