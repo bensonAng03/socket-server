@@ -21,9 +21,6 @@ const shareRooms = [];
 const users = [];
 const publishers = [];
 const countDown=[];
-const socket = io("ws://echo.websocket.org", {
-  transports: ["websocket"]
-});
 if(socket){
   console.log("socket:",socket)
 }
