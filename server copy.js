@@ -1,11 +1,7 @@
 const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
-
 const app = express();
-const server = http.createServer(app);
-const PORT = process.env.PORT || 3000;
-const io = new Server(server, {
+const server = require("http").Server(app);
+const io = require("socket.io")(server, {
   // maxHttpBufferSize: 1024 * 1024, // 最大消息大小为1MB
   pingInterval: 25000, // 心跳包发送间隔为25秒
   pingTimeout: 60000, // 断开连接的超时时间为60秒
@@ -16,15 +12,12 @@ const io = new Server(server, {
     credentials: true,
   },
 });
-
-app.get("/",(req,res)=>{
-  res.write(`<h1>Socket IO Start on Port:${PORT}</h1>`)
-})
 const cameraRooms = []; 
 const shareRooms = [];
 const users = [];
 const publishers = [];
 const countDown=[];
+
 io.on("connection", (socket) => {
   socket.on("join-room", (roomId, userId, username, isPublisher = false) => {
     socket.join(roomId);
@@ -224,11 +217,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// const port = process.env.PORT || 8000;
-// server.listen(port,() => {
-//   console.log(`Socket.IO server running on port ${port}`);
-// });
-
-server.listen(PORT,()=>{
-  console.log(`Server is running on port ${PORT}`);
+const port = process.env.PORT || 8000;
+server.listen(port,() => {
+  console.log(`Socket.IO server running on port ${port}`);
 });
