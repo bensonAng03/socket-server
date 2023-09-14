@@ -16,7 +16,6 @@ const io = new Server(server, {
     credentials: true,
   },
 });
-
 app.get("/",(req,res)=>{
   res.write(`<h1>Socket IO Start on Port:${PORT}</h1>`)
   res.end()
@@ -26,6 +25,12 @@ const shareRooms = [];
 const users = [];
 const publishers = [];
 const countDown=[];
+const socket = io("ws://echo.websocket.org", {
+  transports: ["websocket"]
+});
+if(socket){
+  console.log("socket:",socket)
+}
 io.on("connection", (socket) => {
   socket.on("join-room", (roomId, userId, username, isPublisher = false) => {
     socket.join(roomId);
