@@ -7,8 +7,8 @@ const server = http.createServer(app);
 const PORT = process.env.PORT || 3000;
 const io = new Server(server, {
   // maxHttpBufferSize: 1024 * 1024, // 最大消息大小为1MB
-  pingInterval: 25000, // 心跳包发送间隔为25秒
-  pingTimeout: 60000, // 断开连接的超时时间为60秒
+  // pingInterval: 25000, // 心跳包发送间隔为25秒
+  // pingTimeout: 60000, // 断开连接的超时时间为60秒
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
