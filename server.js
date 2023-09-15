@@ -4,7 +4,7 @@ const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 80;
 const io = new Server(server, {
   // maxHttpBufferSize: 1024 * 1024, // 最大消息大小为1MB
   // pingInterval: 25000, // 心跳包发送间隔为25秒
