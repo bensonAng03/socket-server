@@ -1,27 +1,16 @@
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
-
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 80;
 const io = new Server(server, {
-  // maxHttpBufferSize: 1024 * 1024, // 最大消息大小为1MB
-  // pingInterval: 25000, // 心跳包发送间隔为25秒
-  // pingTimeout: 60000, // 断开连接的超时时间为60秒
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true,
   },
-});
-app.get("/",(req,res)=>{
-  res.write(`<h1>Socket IO Start on Port:${PORT}</h1>`)
-})
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
 });
 const cameraRooms = []; 
 const shareRooms = [];
@@ -31,20 +20,21 @@ const countDown=[];
 io.on("connection", (socket) => {
   socket.on("join-room", (roomId, userId, username, isPublisher = false) => {
     socket.join(roomId);
+    // Initialize the user ID array for the room
     if (!publishers[roomId]) {
-      publishers[roomId] = []; // 初始化房间的用户ID数组
+      publishers[roomId] = [];
     }
     if (!cameraRooms[roomId]) {
-      cameraRooms[roomId] = []; // 初始化房间的用户ID数组
+      cameraRooms[roomId] = [];
     }
     if (!shareRooms[roomId]) {
-      shareRooms[roomId] = []; // 初始化房间的用户ID数组
+      shareRooms[roomId] = [];
     }
     if (!users[roomId]) {
-      users[roomId] = []; // 初始化房间的用户ID数组
+      users[roomId] = [];
     }
     if (!countDown[roomId]) {
-      countDown[roomId] = 30*60; // 初始化房间的用户ID数组
+      countDown[roomId] = 30*60; 
     }
     if (isPublisher) {
       if (userId.startsWith("camera")) {
@@ -55,7 +45,6 @@ io.on("connection", (socket) => {
     }
     socket.to(roomId).emit("user-connected", userId, username);
     if (userId.startsWith("camera")) {
-      // 用户属于 cameraPeer
       const existingUsersId = cameraRooms[roomId];
       const existingUsers = users[roomId];
       if (existingUsers.length > 0) {
@@ -63,7 +52,6 @@ io.on("connection", (socket) => {
       }
       cameraRooms[roomId].push(userId);
     } else if (userId.startsWith("share")) {
-      // 用户属于 sharePeer
       const existingUsersId = shareRooms[roomId];
       const existingUsers = users[roomId];
       if (existingUsers.length > 0) {
@@ -178,7 +166,7 @@ io.on("connection", (socket) => {
           user.isShareScreen = isShareScreen;
           user.isShareAudio = isShareAudio;
         } else {
-          // 如果找不到对应用户的数据，则创建新的用户数据对象
+          // If no corresponding user data is found, create a new user data object
           users[roomId]?.push({
             username,
             userCameraId,
@@ -220,18 +208,17 @@ io.on("connection", (socket) => {
   });
   socket.on("reset-publisher-id", (roomId, userCameraId, userScreenId) => {
     if (!publishers[roomId]) {
-      publishers[roomId] = []; // 初始化房间的用户ID数组
+      // Initialize the user ID array for the room
+      publishers[roomId] = [];
     }
     publishers[roomId].cameraId = userCameraId;
     publishers[roomId].shareId = userScreenId;
   });
+  
+  socket.on("screen-sharing-requested", (roomId,requestStatus) => {
+    io.to(roomId).emit("screen-sharing-requested-status", requestStatus);
+  });
 });
-
-// const port = process.env.PORT || 8000;
-// server.listen(port,() => {
-//   console.log(`Socket.IO server running on port ${port}`);
-// });
-
 server.listen(PORT,()=>{
   console.log(`Server is running on port ${PORT}`);
 });
