@@ -12,6 +12,9 @@ const io = new Server(server, {
     credentials: true,
   },
 });
+app.get("/",(req,res)=>{
+  res.write(`<h1>Socket IO Start on Port:${PORT}</h1>`)
+})
 const cameraRooms = []; 
 const shareRooms = [];
 const users = [];
